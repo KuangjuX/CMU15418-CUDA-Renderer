@@ -1,0 +1,12 @@
+{
+    "files.associations": {
+        "*.cu_inl": "cpp",
+        "*.tcc": "cpp",
+        "fstream": "cpp",
+        "istream": "cpp",
+        "ostream": "cpp",
+        "streambuf": "cpp",
+        "functional": "cpp",
+        "unordered_map": "cpp"
+    }
+}

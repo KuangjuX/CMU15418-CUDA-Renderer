@@ -9,18 +9,19 @@
 extern float toBW(int bytes, float sec);
 
 __global__ void
-saxpy_kernel(int N, float alpha, float* x, float* y, float* result) {
+saxpy_kernel(int N, float alpha, float *x, float *y, float *result)
+{
 
     // compute overall index from position of thread in current block,
     // and given the block we are in
     int index = blockIdx.x * blockDim.x + threadIdx.x;
 
     if (index < N)
-       result[index] = alpha * x[index] + y[index];
+        result[index] = alpha * x[index] + y[index];
 }
 
-void
-saxpyCuda(int N, float alpha, float* xarray, float* yarray, float* resultarray) {
+void saxpyCuda(int N, float alpha, float *xarray, float *yarray, float *resultarray)
+{
 
     int totalBytes = sizeof(float) * 3 * N;
 
@@ -28,14 +29,16 @@ saxpyCuda(int N, float alpha, float* xarray, float* yarray, float* resultarray) 
     const int threadsPerBlock = 512;
     const int blocks = (N + threadsPerBlock - 1) / threadsPerBlock;
 
-    float* device_x;
-    float* device_y;
-    float* device_result;
+    float *device_x;
+    float *device_y;
+    float *device_result;
 
     //
     // TODO allocate device memory buffers on the GPU using cudaMalloc
     //
-
+    cudaMalloc(&device_x, sizeof(float) * N);
+    cudaMalloc(&device_y, sizeof(float) * N);
+    cudaMalloc(&device_result, sizeof(float) * N);
 
     // start timing after allocation of device memory
     double startTime = CycleTimer::currentSeconds();
@@ -43,33 +46,43 @@ saxpyCuda(int N, float alpha, float* xarray, float* yarray, float* resultarray) 
     //
     // TODO copy input arrays to the GPU using cudaMemcpy
     //
+    cudaMemcpy(device_x, xarray, sizeof(float) * N, cudaMemcpyHostToDevice);
+    cudaMemcpy(device_y, yarray, sizeof(float) * N, cudaMemcpyHostToDevice);
 
+    double startkernelTime = CycleTimer::currentSeconds();
 
     // run kernel
     saxpy_kernel<<<blocks, threadsPerBlock>>>(N, alpha, device_x, device_y, device_result);
     cudaThreadSynchronize();
 
+    double endkernelTime = CycleTimer::currentSeconds();
+    double totalkernelTime = endkernelTime - startkernelTime;
+
     //
     // TODO copy result from GPU using cudaMemcpy
     //
+    cudaMemcpy(resultarray, device_result, sizeof(float) * N, cudaMemcpyDeviceToHost);
 
     // end timing after result has been copied back into host memory
     double endTime = CycleTimer::currentSeconds();
 
     cudaError_t errCode = cudaPeekAtLastError();
-    if (errCode != cudaSuccess) {
+    if (errCode != cudaSuccess)
+    {
         fprintf(stderr, "WARNING: A CUDA error occured: code=%d, %s\n", errCode, cudaGetErrorString(errCode));
     }
 
     double overallDuration = endTime - startTime;
-    printf("Overall: %.3f ms\t\t[%.3f GB/s]\n", 1000.f * overallDuration, toBW(totalBytes, overallDuration));
+    printf("Size: %d\t Overall kernel: %.3f ms\t Overall: %.3f ms\t\t[%.3f GB/s]\n", N, 1000.f * totalkernelTime, 1000.f * overallDuration, toBW(totalBytes, overallDuration));
 
     // TODO free memory buffers on the GPU
-
+    cudaFree(device_x);
+    cudaFree(device_y);
+    cudaFree(device_result);
 }
 
-void
-printCudaInfo() {
+void printCudaInfo()
+{
 
     // for fun, just print out some stats on the machine
 
@@ -79,7 +92,8 @@ printCudaInfo() {
     printf("---------------------------------------------------------\n");
     printf("Found %d CUDA devices\n", deviceCount);
 
-    for (int i=0; i<deviceCount; i++) {
+    for (int i = 0; i < deviceCount; i++)
+    {
         cudaDeviceProp deviceProps;
         cudaGetDeviceProperties(&deviceProps, i);
         printf("Device %d: %s\n", i, deviceProps.name);

@@ -1,0 +1,22 @@
+---------------------------------------------------------
+Found 2 CUDA devices
+Device 0: NVIDIA GeForce RTX 2080 Ti
+   SMs:        68
+  Maximum number of blocks per multiprocessor: 16
+  Maximum number of threads per multiprocessor: 1024
+  Maximum number of blocks: 1088
+   Global mem: 11019 MB
+   CUDA Cap:   7.5
+Device 1: NVIDIA GeForce RTX 2080 Ti
+   SMs:        68
+  Maximum number of blocks per multiprocessor: 16
+  Maximum number of threads per multiprocessor: 1024
+  Maximum number of blocks: 1088
+   Global mem: 11019 MB
+   CUDA Cap:   7.5
+---------------------------------------------------------
+thread size: 128, totalThreads: 1024
+thread size: 128, totalThreads: 1024
+thread size: 128, totalThreads: 1024
+GPU_time: 0.617 ms
+Find_peaks outputs are correct!

@@ -1,0 +1,18 @@
+---------------------------------------------------------
+Found 2 CUDA devices
+Device 0: NVIDIA GeForce RTX 2080 Ti
+   SMs:        68
+   Global mem: 11019 MB
+   CUDA Cap:   7.5
+Device 1: NVIDIA GeForce RTX 2080 Ti
+   SMs:        68
+   Global mem: 11019 MB
+   CUDA Cap:   7.5
+---------------------------------------------------------
+Usage: ./cudaScan_soln [options]
+Program Options:
+  -m  --test <TYPE>      Run specified function on input.  Valid tests are: scan, find_repeats
+  -i  --input <NAME>     Run test on given input type. Valid inputs  are: test1, random
+  -n  --arraysize <INT>  Number of elements in arrays
+  -t  --thrust           Use Thrust library implementation
+  -?  --help             This message
